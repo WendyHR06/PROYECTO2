@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVC - Guía Didáctica Interactiva</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg-color: #ffffff;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #334155;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* BARRA SUPERIOR DE NAVEGACIÓN */
+        .nav-tabs-container {
+            background-color: rgba(15, 23, 42, 0.95);
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand-logo {
+            color: #ffffff;
+            font-family: system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            padding: 12px 0;
+        }
+
+        .nav-tabs {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #cbd5e1;
+            padding: 16px 14px;
+            font-size: 0.9rem;
+            font-family: system-ui, sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: #ffffff;
+        }
+
+        .tab-btn.active {
+            color: #ffffff;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* BANNERS PRINCIPALES (HERO) */
+        .hero-banner {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            min-height: 320px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #ffffff;
+            padding: 0 20px;
+        }
+
+        /* FONDOS DESDE TU CARPETA IMGS */
+        #hero-inicio {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), 
+                              url('imgs/imagen\ inicio.jpg');
+        }
+
+        #hero-ejemplos {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.75)), 
+                              url('imgs/imagen\ ejemplo.jpg');
+        }
+
+        #hero-frameworks {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.75)), 
+                              url('imgs/imagen\ framework.png');
+        }
+
+        #hero-flujo {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), 
+                              url('imgs/imagen\ flujo\ de\ Datos.jpeg');
+        }
+
+        #hero-componentes {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), 
+                              url('imgs/imagen\ componentes\ .jpeg');
+        }
+
+        #hero-conceptos {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.6)), 
+                              url('imgs/imagenes\ concepto.jpeg');
+        }
+
+        #hero-referencias {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.65), rgba(15, 23, 42, 0.65)), 
+                              url('imgs/imagen\ referencias.jpeg');
+        }
+
+        .hero-banner h1 {
+            font-size: 3.5rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            max-width: 900px;
+            text-transform: uppercase;
+        }
+
+        .hero-banner p {
+            font-family: system-ui, sans-serif;
+            font-size: 1.25rem;
+            font-weight: 300;
+            color: #f1f5f9;
+            max-width: 800px;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        main {
+            max-width: 1050px;
+            width: 100%;
+            margin: 40px auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ESTILOS DE REFERENCIAS */
+        .references-container {
+            max-width: 850px;
+            margin: 20px auto 60px auto;
+            padding: 0 10px;
+        }
+
+        .reference-item {
+            font-size: 0.95rem;
+            color: #334155;
+            line-height: 1.8;
+            margin-bottom: 22px;
+            padding-left: 36px;
+            text-indent: -36px;
+            text-align: justify;
+            word-break: break-word;
+        }
+
+        .reference-item a {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+
+        .reference-item a:hover {
+            color: #1d4ed8;
+        }
+
+        /* ESTILOS CONCEPTOS GENERALES */
+        .conceptos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 20px;
+            align-items: start;
+        }
+
+        .concept-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .concept-media {
+            width: 100%;
+            max-width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .concept-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .toggle-btn {
+            background-color: #475569;
+            color: #ffffff;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: transform 0.3s ease, background-color 0.2s ease;
+            margin-bottom: 15px;
+        }
+
+        .toggle-btn:hover {
+            background-color: var(--primary);
+        }
+
+        .toggle-btn.active {
+            transform: rotate(180deg);
+        }
+
+        .concept-text-collapsible {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
+            opacity: 0;
+        }
+
+        .concept-text-collapsible.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .concept-text-collapsible p {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        /* ESTILOS DE COMPONENTES */
+        .component-row {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            margin-bottom: 70px;
+        }
+
+        .component-row.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .component-media {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            min-width: 250px;
+        }
+
+        .component-media img {
+            width: 100%;
+            max-width: 240px;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        .component-text {
+            flex: 1.5;
+            min-width: 300px;
+        }
+
+        .component-text.text-right {
+            text-align: right;
+        }
+
+        .component-text h2 {
+            font-size: 2.2rem;
+            font-weight: 400;
+            color: #4c4475;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .component-text p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ESTILOS FLUJO DE DATOS */
+        .flow-container {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .flow-media {
+            flex: 1;
+            min-width: 320px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .flow-media img {
+            width: 100%;
+            max-width: 450px;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        .flow-text {
+            flex: 1.2;
+            min-width: 300px;
+        }
+
+        .flow-text p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        /* ESTILOS FRAMEWORKS */
+        .framework-row {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .framework-row.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .framework-media {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .framework-media img {
+            width: 100%;
+            height: auto;
+            max-height: 320px;
+            object-fit: cover;
+            border-radius: 6px;
+            display: block;
+        }
+
+        .framework-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .framework-text h2 {
+            font-size: 2rem;
+            font-weight: 400;
+            color: #0f172a;
+            margin-bottom: 16px;
+        }
+
+        .framework-text p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            line-height: 1.7;
+        }
+
+        /* ESTILOS EJEMPLOS */
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 10px;
+        }
+
+        .example-card {
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .example-image-container {
+            width: 100%;
+            height: 260px;
+            overflow: hidden;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            background-color: #f1f5f9;
+        }
+
+        .example-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .example-card h3 {
+            font-size: 1.6rem;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+        .example-info p {
+            font-size: 0.95rem;
+            color: #1e293b;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .intro-section h2 {
+            font-size: 1.8rem;
+            font-style: italic;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+        .intro-section p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+            line-height: 1.7;
+        }
+
+        footer {
+            background-color: #0f172a;
+            color: #94a3b8;
+            text-align: center;
+            padding: 24px;
+            font-size: 0.9rem;
+            font-family: system-ui, sans-serif;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-banner h1 {
+                font-size: 2.2rem;
+            }
+            .conceptos-grid {
+                grid-template-columns: 1fr;
+            }
+            .component-row, .component-row.reverse,
+            .flow-container, .framework-row, .framework-row.reverse {
+                flex-direction: column;
+            }
+            .component-text.text-right {
+                text-align: left;
+            }
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+            .reference-item {
+                padding-left: 20px;
+                text-indent: -20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA SUPERIOR -->
+    <div class="nav-tabs-container">
+        <a href="#" class="brand-logo">MVC</a>
+        <ul class="nav-tabs">
+            <li><button class="tab-btn active" onclick="openTab(event, 'inicio')">Inicio</button></li>
+            <li><button class="tab-btn" onclick="openTab(event, 'ejemplos')">Ejemplos</button></li>
+            <li><button class="tab-btn" onclick="openTab(event, 'frameworks')">Frameworks</button></li>
+            <li><button class="tab-btn" onclick="openTab(event, 'flujo')">Flujo de Datos</button></li>
+            <li><button class="tab-btn" onclick="openTab(event, 'componentes')">Componentes</button></li>
+            <li><button class="tab-btn" onclick="openTab(event, 'conceptos')">Conceptos Generales</button></li>
+            <li><button class="tab-btn" onclick="openTab(event, 'referencias')">REFERENCIAS</button></li>
+        </ul>
+    </div>
+
+    <!-- CONTENIDO DE LAS PESTAÑAS -->
+
+    <!-- PESTAÑA 1: INICIO -->
+    <div id="inicio" class="tab-content active">
+        <header id="hero-inicio" class="hero-banner">
+            <h1>Modelo-vista-controlador<br>(MVC)</h1>
+            <p>Guía interactiva sobre la arquitectura fundamental del desarrollo web moderno</p>
+        </header>
+        <main>
+            <section class="intro-section">
+                <h2>¡Bienvenido(a)!</h2>
+                <p>Este sitio web ha sido diseñado como una guía didáctica y accesible para comprender el patrón de arquitectura de software <strong>Modelo-Vista-Controlador (MVC)</strong>.</p>
+                <p>A través de esta plataforma aprenderás qué es esta arquitectura, cómo se dividen las responsabilidades en un sistema informático, cómo fluye la información paso a paso y de qué manera lo utilizan las empresas y frameworks más populares de la actualidad.</p>
+            </section>
+        </main>
+    </div>
+
+    <!-- PESTAÑA 2: EJEMPLOS -->
+    <div id="ejemplos" class="tab-content">
+        <header id="hero-ejemplos" class="hero-banner">
+            <h1>Ejemplos</h1>
+            <p>Descubre cómo la industria del software aplica el patrón MVC en la vida real</p>
+        </header>
+        <main>
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="example-image-container">
+                        <img src="imgs/imagen ejemplo Laravel.jpeg" alt="Laravel MVC">
+                    </div>
+                    <h3>Laravel</h3>
+                    <div class="example-info">
+                        <p><strong>Tecnología:</strong> PHP</p>
+                        <p><strong>Uso principal:</strong> Desarrollo de sitios y aplicaciones web dinámicas.</p>
+                        <p><strong>Modelo:</strong> Utiliza Eloquent para comunicarse con la base de datos de forma rápida.</p>
+                        <p><strong>Vista:</strong> Utiliza el motor Blade para diseñar el código HTML que ve el usuario.</p>
+                        <p><strong>Controlador:</strong> Recibe las peticiones del sitio web y une la información entre la base de datos y la pantalla.</p>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-image-container">
+                        <img src="imgs/imagen ejemplo spring.png" alt="Spring MVC">
+                    </div>
+                    <h3>Spring MVC</h3>
+                    <div class="example-info">
+                        <p><strong>Tecnología:</strong> Java</p>
+                        <p><strong>Uso principal:</strong> Aplicaciones empresariales, bancos y plataformas de alto tráfico.</p>
+                        <p><strong>Modelo:</strong> Maneja la lógica de negocio pesada y la persistencia de datos.</p>
+                        <p><strong>Vista:</strong> Renderiza las pantallas o envía respuestas en formatos seguros.</p>
+                        <p><strong>Controlador:</strong> Administra el tráfico de miles de usuarios al mismo tiempo mediante anotaciones en el código.</p>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-image-container">
+                        <img src="imgs/imagen ejemplo django.jpeg" alt="Django MVT">
+                    </div>
+                    <h3>Django</h3>
+                    <div class="example-info">
+                        <p><strong>Tecnología:</strong> Python</p>
+                        <p><strong>Uso principal:</strong> Plataformas de gran escala (usado en plataformas como Instagram o Spotify).</p>
+                        <p><strong>Usa una variación equivalente llamada MVT (Modelo-Vista-Plantilla):</strong></p>
+                        <p><strong>Modelo:</strong> Maneja la base de datos con código Python sencillo.</p>
+                        <p><strong>Plantilla (equivale a la Vista):</strong> Contiene la estructura visual en HTML.</p>
+                        <p><strong>Vista (equivale al Controlador):</strong> Procesa la lógica y responde al navegador.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PESTAÑA 3: FRAMEWORKS -->
+    <div id="frameworks" class="tab-content">
+        <header id="hero-frameworks" class="hero-banner">
+            <h1>Frameworks y Entornos de Desarrollo</h1>
+            <p>Las herramientas más utilizadas que implementan el patrón MVC</p>
+        </header>
+        <main>
+            <div class="framework-row">
+                <div class="framework-media">
+                    <img src="imgs/imagen framework-que-es.jpg" alt="¿Qué es un Framework?">
+                </div>
+                <div class="framework-text">
+                    <p>Un framework es un conjunto de carpetas, reglas y componentes de código ya preparados. En lugar de que un desarrollador escriba miles de líneas desde cero para conectar una base de datos o procesar un formulario, el framework le entrega la estructura MVC ya lista para que solo llene la lógica necesaria.</p>
+                </div>
+            </div>
+
+            <div class="framework-row reverse">
+                <div class="framework-media">
+                    <img src="imgs/imagen frameworks anatomía.jpg" alt="Anatomía interna de los Frameworks">
+                </div>
+                <div class="framework-text">
+                    <h2>Anatomía interna de los Frameworks</h2>
+                    <p><strong>Frameworks Backend (Servidor):</strong> Se encargan principalmente del Modelo y el Controlador. Gestionan la seguridad, las bases de datos y la velocidad del servidor (ejemplo: Express.js, ASP.NET Core).</p>
+                    <p><strong>Frameworks Frontend (Cliente):</strong> Se enfocan al 100% en la Vista. Controlan cómo se renderiza la pantalla en el navegador o teléfono (ejemplo: Angular, Vue.js).</p>
+                    <p><strong>Frameworks Full-Stack:</strong> Cubren las tres capas (Modelo, Vista y Controlador) dentro del mismo proyecto (ejemplo: Laravel, Ruby on Rails).</p>
+                </div>
+            </div>
+
+            <div class="framework-row">
+                <div class="framework-media">
+                    <img src="imgs/image frameworks características.jpg" alt="Características técnicas principales">
+                </div>
+                <div class="framework-text">
+                    <h2>Características técnicas principales</h2>
+                    <p><strong>Enrutamiento automático:</strong> El controlador mapea las direcciones web (URLs) con funciones específicas del código.</p>
+                    <p><strong>ORM (Object-Relational Mapping):</strong> Permite al Modelo hablar con la base de datos usando el mismo lenguaje de programación sin escribir consultas SQL a mano.</p>
+                    <p><strong>Motores de Plantillas:</strong> Permiten a la Vista combinar código HTML plano con datos dinámicos de forma segura.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PESTAÑA 4: FLUJO DE DATOS -->
+    <div id="flujo" class="tab-content">
+        <header id="hero-flujo" class="hero-banner">
+            <h1>El Flujo de Datos en el Patrón MVC</h1>
+            <p>Paso a paso: cómo viaja la información desde tu pantalla hasta el servidor</p>
+        </header>
+        <main>
+            <div class="flow-container">
+                <div class="flow-media">
+                    <img src="imgs/imagen Datos algoritmo.png" alt="Diagrama de flujo de datos MVC">
+                </div>
+                <div class="flow-text">
+                    <p>El flujo de datos en el patrón Modelo-Vista-Controlador (MVC) es el camino ordenado que recorre la información desde que el usuario realiza una acción en la pantalla hasta que recibe una respuesta. Todo comienza en la Vista cuando el usuario interactúa con la interfaz, por ejemplo, haciendo clic en un botón o enviando un formulario. Inmediatamente, la Vista envía esta solicitud al Controlador, el cual actúa como el intermediario y cerebro del proceso, recibiendo la petición y determinando qué lógica debe ejecutarse. Luego, el Controlador se comunica con el Modelo para solicitar los datos necesarios o aplicar las reglas de negocio, como consultar o guardar información en la base de datos. Una vez que el Modelo procesa esta solicitud, le devuelve los datos organizados al Controlador. Finalmente, el Controlador toma esa información, selecciona la Vista correspondiente y le entrega los datos para que la pantalla se dibuje y actualice frente al usuario, completando así el ciclo de manera segura y eficiente sin que la Vista y el Modelo tengan que comunicarse directamente.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PESTAÑA 5: COMPONENTES -->
+    <div id="componentes" class="tab-content">
+        <header id="hero-componentes" class="hero-banner">
+            <h1>Componentes</h1>
+            <p>Las tres capas independientes que estructuran la arquitectura MVC</p>
+        </header>
+        <main>
+            <div class="component-row">
+                <div class="component-media">
+                    <img src="imgs/imagen componentes modelo.png" alt="Icono Modelo">
+                </div>
+                <div class="component-text">
+                    <h2>MODELO</h2>
+                    <p>El Modelo es la capa encargada de la lógica de negocio y los datos del sistema. Su función principal es conectarse con la base de datos para consultar, crear, modificar o eliminar registros, además de aplicar las reglas matemáticas o de validación de la aplicación. El Modelo no conoce cómo se mostrarán los datos en pantalla ni interactúa con el diseño gráfico.</p>
+                </div>
+            </div>
+
+            <div class="component-row reverse">
+                <div class="component-media">
+                    <img src="imgs/imagen componentes vista.png" alt="Icono Vista">
+                </div>
+                <div class="component-text text-right">
+                    <h2>VISTA</h2>
+                    <p>La Vista es la interfaz visual con la que el usuario interactúa en su pantalla. Su única responsabilidad es recibir la información ya procesada y mostrarla de forma clara mediante elementos como botones, tablas, formularios y texto (utilizando tecnologías como HTML y CSS). La Vista no contiene lógica compleja ni se comunica jamás de forma directa con la base de datos.</p>
+                </div>
+            </div>
+
+            <div class="component-row">
+                <div class="component-media">
+                    <img src="imgs/imagen componentes controlador.png" alt="Icono Controlador">
+                </div>
+                <div class="component-text">
+                    <h2>CONTROLADOR</h2>
+                    <p>El Controlador actúa como el intermediario y centro de control entre la Vista y el Modelo. Su trabajo consiste en recibir las acciones del usuario (como un clic en un botón o el envío de un formulario), procesar la orden, solicitarle los datos necesarios al Modelo y, finalmente, decidir qué nueva Vista debe cargarse o actualizarse frente al usuario.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PESTAÑA 6: CONCEPTOS GENERALES -->
+    <div id="conceptos" class="tab-content">
+        <header id="hero-conceptos" class="hero-banner">
+            <h1>Conceptos Generales</h1>
+            <p>Principios fundamentales, historia y ventajas de la arquitectura MVC</p>
+        </header>
+        <main>
+            <div class="conceptos-grid">
+                <div class="concept-card">
+                    <div class="concept-media">
+                        <img src="imgs/imagen concepto patron.png" alt="Origen de MVC">
+                    </div>
+                    <button class="toggle-btn" onclick="toggleConcept(this)">▼</button>
+                    <div class="concept-text-collapsible">
+                        <p>El patrón Modelo-Vista-Controlador (MVC) es una arquitectura de software diseñada para organizar el desarrollo de aplicaciones dividiendo el código en tres capas independientes: el Modelo (datos), la Vista (interfaz) y el Controlador (lógica de control). Esta metodología nació para resolver el problema del código desordenado o espagueti, permitiendo que la interfaz gráfica permanezca separada del procesamiento interno y de la base de datos.</p>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <div class="concept-media">
+                        <img src="imgs/imagen concepto arquitectura.png" alt="Ventajas del Patrón">
+                    </div>
+                    <button class="toggle-btn" onclick="toggleConcept(this)">▼</button>
+                    <div class="concept-text-collapsible">
+                        <p>Esta arquitectura ofrece grandes ventajas en el desarrollo web moderno, tales como el trabajo simultáneo en equipo (donde los diseñadores trabajan en las Vistas y los programadores en el Modelo o Controlador), la reutilización del código para múltiples plataformas y la facilidad para realizar pruebas y corregir errores de forma rápida y localizada.</p>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <div class="concept-media">
+                        <img src="imgs/imagen concepto importancia.png" alt="Importancia">
+                    </div>
+                    <button class="toggle-btn" onclick="toggleConcept(this)">▼</button>
+                    <div class="concept-text-collapsible">
+                        <p>La importancia del patrón MVC radica en la separación de responsabilidades, lo que facilita enormemente el mantenimiento y la escalabilidad del proyecto. Al estar los componentes aislados, los desarrolladores pueden modificar la apariencia visual sin alterar las reglas del sistema o cambiar la base de datos sin afectar la interfaz del usuario.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PESTAÑA 7: REFERENCIAS -->
+    <div id="referencias" class="tab-content">
+        <header id="hero-referencias" class="hero-banner">
+            <h1>REFERENCIAS</h1>
+        </header>
+
+        <main>
+            <div class="references-container">
+                <p class="reference-item">
+                    Pressman, R. S., & Maxim, B. R. (2021). <em>Ingeniería del software: Un enfoque práctico</em> (9.ª ed.). McGraw-Hill Interamericana de España.
+                </p>
+
+                <p class="reference-item">
+                    Sommerville, I. (2011). <em>Ingeniería del software</em> (9.ª ed.). Pearson Educación.
+                </p>
+
+                <p class="reference-item">
+                    Laravel. (s. f.). <em>Conceptos de arquitectura: Ciclo de vida de la solicitud</em>. Documentación oficial de Laravel. Recuperado el 19 de agosto de 2026, de <a href="https://laravel.com/docs/architecture" target="_blank" rel="noopener noreferrer">https://laravel.com/docs/architecture</a>
+                </p>
+
+                <p class="reference-item">
+                    MDN Web Docs. (2025). <em>MVC (Modelo-Vista-Controlador)</em>. Mozilla Developer Network. Recuperado el 19 de agosto de 2026, de <a href="https://developer.mozilla.org/es/docs/Glossary/MVC" target="_blank" rel="noopener noreferrer">https://developer.mozilla.org/es/docs/Glossary/MVC</a>
+                </p>
+
+                <p class="reference-item">
+                    Microsoft. (2025). <em>Información general sobre ASP.NET Core MVC</em>. Documentación de Microsoft Learn. Recuperado el 19 de agosto de 2026, de <a href="https://learn.microsoft.com/es-es/aspnet/core/mvc/overview" target="_blank" rel="noopener noreferrer">https://learn.microsoft.com/es-es/aspnet/core/mvc/overview</a>
+                </p>
+
+                <p class="reference-item">
+                    Django Software Foundation. (s. f.). <em>Preguntas frecuentes sobre Django: FAQ</em>. Documentación oficial de Django. Recuperado el 19 de agosto de 2026, de <a href="https://docs.djangoproject.com/es/stable/faq/general/" target="_blank" rel="noopener noreferrer">https://docs.djangoproject.com/es/stable/faq/general/</a>
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>© MVC - Guía Didáctica e Interactiva por Pestañas | Listo para GitHub Pages</p>
+    </footer>
+
+    <script>
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+
+            const tabButtons = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("active");
+            }
+
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        function toggleConcept(button) {
+            const content = button.nextElementSibling;
+            button.classList.toggle("active");
+            content.classList.toggle("open");
+        }
+    </script>
+</body>
+</html>
